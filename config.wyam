@@ -1,0 +1,21 @@
+#n Wyam.Sass
+#recipe Blog
+#t BlogTemplate
+
+// Customize your settings and add new ones here
+Settings[Keys.Host] = "host.com";
+Settings[BlogKeys.Title] = "Learn Driven Development";
+Settings[BlogKeys.Description] = "Welcome!";
+Settings["ExcerptSeparator"] = "<!--more-->";
+Settings["Author"] = "Paweł Hemperek";
+
+// Add any pipeline customizations here
+
+// Add any pipeline customizations here
+Pipelines["Sass"].Clear();
+
+Pipelines.Add("WhiteglassSass",
+    ReadFiles("assets/sass/main.scss"),
+    Sass().WithCompactOutputStyle(),
+    WriteFiles((opt, ctx) => "assets/css/style.css").UseWriteMetadata(false)
+);

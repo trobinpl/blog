@@ -1,0 +1,19 @@
+@{ 
+    var postPages = Model.DocumentList(Keys.PageDocuments).OrderByDescending(x => x.Get<DateTime>(BlogKeys.Published)); 
+    string tag = Model.String(BlogKeys.Tag).ToLowerInvariant().Replace(' ', '-'); 
+    tag = tag.StartsWith(".") ? tag.Substring(1) : tag; 
+}
+
+<div class="home">
+<h1 class="page-heading">Archive of tag '@tag'</h1>
+<ul class="post-archives">
+    @foreach(var post in postPages){
+        <li>
+            <span class="post-meta">@Html.Partial("_PostMeta", post)</span>
+            <h2>
+                <a class="post-link" href="@Context.GetLink(post)">@post.WithoutSettings.String(BlogKeys.Title)</a>
+            </h2>
+        </li>
+    }
+</ul>
+</div>

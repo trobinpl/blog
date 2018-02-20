@@ -1,0 +1,22 @@
+<div class="home">
+    <h1 class="page-heading">Blog Archive</h1>
+    
+    <ul class="post-archives">
+    @foreach(var post in Model.DocumentList(Keys.PageDocuments)){
+        <li>
+            <span class="post-meta">@Html.Partial("_PostMeta", post)</span>
+            <h2>
+                <a class="post-link" href="@Context.GetLink(post)">@post.WithoutSettings.String(BlogKeys.Title)</a>
+            </h2>
+        </li>
+        }
+    </ul>
+</div>
+
+@if(Model.Bool(Keys.HasPreviousPage)) {
+    <a href="@(Context.GetLink(Model.Document(Keys.PreviousPage)))"><span aria-hidden="true">&larr;</span> Newer</a> 
+} 
+
+@if(Model.Bool(Keys.HasNextPage)) {
+    <a href="@(Context.GetLink(Model.Document(Keys.NextPage)))">Older <span aria-hidden="true">&rarr;</span></a> 
+}

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>@Model.WithoutSettings.String(BlogKeys.Title)</title>
+        <link rel="stylesheet" href="@Context.GetLink("/assets/css/style.css")">
+    </head>
+    <body>
+        @Html.Partial("_Header")
+        <main class="page-content" aria-label="Content">
+            <div class="wrapper">
+                @RenderBody()
+            </div>
+        </main>
+        <footer class="site-footer">
+            <div class="wrapper">
+                <p>© @Model.String("BlogAuthor") - Powered by <a href="https://wyam.io/">Waym</a> &amp; <a href="https://github.com/trobinpl/whiteglass-wyam">whiteglass-wyam</a> based on <a href="https://github.com/yous/whiteglass">whiteglass</a> © Yous - Subscribe via <a href="@Context.GetLink("feed.rss")">RSS</a></p>
+            </div>
+        </footer>
+        @*@if(Context.String(BlogKeys.Description) != null)
+        {
+            <a href="@Context.GetLink("/")"><h1>@Context.String(BlogKeys.Description)</h1> </a>
+        }
+        @if(Context.String(BlogKeys.Intro) != null)
+        {            
+            @if(Context.String(BlogKeys.Description) != null)
+            {
+                <hr>
+            }
+            <span>@Context.String(BlogKeys.Intro)</span>
+        }
+
+        @{
+            List<Tuple<string, string>> pages = Context
+                .Documents[Blog.Pages]
+                .Where(x => x.Bool(BlogKeys.ShowInNavbar, true))
+                .Where(x => x.FilePath(Keys.RelativeFilePath)?.FullPath?.StartsWith("index") == (bool?)false)
+                .Select(x => Tuple.Create(x.WithoutSettings.String(Keys.Title), Context.GetLink(x)))
+                .Where(x => !string.IsNullOrEmpty(x.Item1))
+                .OrderBy(x => x.Item1)
+                .ToList();
+            if(Documents[Blog.Tags].Any())
+            {
+                pages.Insert(0, Tuple.Create("Tags", Context.GetLink("tags/index.html")));
+            }
+            if(Documents[Blog.BlogPosts].Any() && Context.Bool(BlogKeys.GenerateArchive))
+            {
+                pages.Insert(0, Tuple.Create("Archive", Context.GetLink(Context.String(BlogKeys.PostsPath) + "/index.html")));
+            }
+            foreach(Tuple<string, string> page in pages)
+            {
+                <li><a href="@page.Item2">@page.Item1</a></li>
+            }
+        }*@
+    <script id="dsq-count-scr" src="//test-jkvbg2c3yi.disqus.com/count.js" async></script>
+    </body>
+</html>
+

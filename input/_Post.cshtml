@@ -1,0 +1,22 @@
+<header class="post-header">
+    <h1 class="post-title">
+        <a class="post-link" href="@Context.GetLink(Model)">@Model.WithoutSettings.String(BlogKeys.Title)</a>
+    </h1>
+    <p class="post-meta">@Html.Partial("_PostMeta", Model)</p>
+</header>
+<div class="post-content">
+    @if(Context.Bool(BlogKeys.IndexFullPosts) || !Model.Content.Contains(Model.String("ExcerptSeparator")))
+    {
+        @Html.Raw(Model.Content)    
+    }
+    else
+    {
+        @Html.Raw(Model.String(BlogKeys.Excerpt))
+        if(Model.Content.Contains(Model.String("ExcerptSeparator"))){
+            <p class="post-continue">
+                <a href="@Context.GetLink(Model)">Read on &rarr;</a>
+            </p>
+        }
+        
+    }
+</div>
