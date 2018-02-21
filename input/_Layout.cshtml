@@ -4,7 +4,17 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>@Model.WithoutSettings.String(BlogKeys.Title)</title>
+        @{
+            var postTitle = @Model.String(BlogKeys.Title);
+            var pageTitle = string.Empty;
+            if(string.IsNullOrEmpty(postTitle)){
+                pageTitle = Context.String(BlogKeys.Title);
+            }
+            else{
+                pageTitle = string.Format("{0} - {1}", postTitle, Context.String(BlogKeys.Title));
+            }
+        }
+        <title>@pageTitle</title>
         <link rel="stylesheet" href="@Context.GetLink("/assets/css/style.css")">
     </head>
     <body>
@@ -54,7 +64,7 @@
                 <li><a href="@page.Item2">@page.Item1</a></li>
             }
         }*@
-    <script id="dsq-count-scr" src="//test-jkvbg2c3yi.disqus.com/count.js" async></script>
+    <script id="dsq-count-scr" src="//learn-driven-development.disqus.com/count.js" async></script>
     </body>
 </html>
 

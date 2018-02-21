@@ -5,9 +5,8 @@
 		<link>http://blog.pawel.hemperek.pl/</link>
 		<description>Welcome!</description>
 		<copyright>2018</copyright>
-		<managingEditor>Paweł Hemperek</managingEditor>
-		<pubDate>Wed, 21 Feb 2018 21:48:45 GMT</pubDate>
-		<lastBuildDate>Wed, 21 Feb 2018 21:48:45 GMT</lastBuildDate>
+		<pubDate>Wed, 21 Feb 2018 22:13:01 GMT</pubDate>
+		<lastBuildDate>Wed, 21 Feb 2018 22:13:01 GMT</lastBuildDate>
 		<item>
 			<title>Simple mediator pattern implementation in C#</title>
 			<link>http://blog.pawel.hemperek.pl/posts/simple-mediator-pattern-implementation-in-c</link>
@@ -15,7 +14,6 @@
 &lt;p&gt;I have to say - this talk really inspired me. In projects I worked on, both professionally and as a hobby, it was an obvious to have a &lt;code&gt;Repository&lt;/code&gt; class, which had methods like&lt;/p&gt;
 
 &lt;p&gt;Size of this file grew along side with project itself. In the end there would be a lot o methods, that were used only in one place in our codebase. Now when I think about that it's clear, that this approach violates many good practices. Most of all - Single Responsibility Principle. I really like how you could improve this poor design with a little of CQRS and &lt;a href="https://sourcemaking.com/design_patterns/mediator"&gt;mediator design pattern&lt;/a&gt;. It's really cool, because using this idea is possible even in legacy project and it will take only a little time to adopt.&lt;/p&gt;</description>
-			<author>Paweł Hemperek</author>
 			<guid>http://blog.pawel.hemperek.pl/posts/simple-mediator-pattern-implementation-in-c</guid>
 			<pubDate>Thu, 15 Feb 2018 00:00:00 GMT</pubDate>
 			<content:encoded>&lt;p&gt;Recently I watched &lt;a href="https://www.youtube.com/watch?v=wTd-VcJCs_M"&gt;fantastic talk by Jimmy Bogard&lt;/a&gt; about how to design your application, so your architecture is as SOLID as your code is. In his talk he says about CQRS and how this pattern allowed him to design his application better.&lt;/p&gt;

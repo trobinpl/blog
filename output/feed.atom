@@ -1,18 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-	<author>
-		<name>Paweł Hemperek</name>
-	</author>
 	<link rel="self" href="http://blog.pawel.hemperek.pl/" />
 	<id>http://blog.pawel.hemperek.pl/</id>
 	<title>Learn Driven Development</title>
 	<rights>2018</rights>
-	<updated>2018-02-21T21:48:45Z</updated>
+	<updated>2018-02-21T22:13:01Z</updated>
 	<subtitle>Welcome!</subtitle>
 	<entry>
-		<author>
-			<name>Paweł Hemperek</name>
-		</author>
 		<link href="http://blog.pawel.hemperek.pl/posts/simple-mediator-pattern-implementation-in-c" />
 		<id>http://blog.pawel.hemperek.pl/posts/simple-mediator-pattern-implementation-in-c</id>
 		<title>Simple mediator pattern implementation in C#</title>
