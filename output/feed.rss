@@ -2,51 +2,62 @@
 <rss xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0">
 	<channel>
 		<title>Learn Driven Development</title>
-		<link>http://host.com/</link>
+		<link>http://blog.pawel.hemperek.pl/</link>
 		<description>Welcome!</description>
 		<copyright>2018</copyright>
 		<managingEditor>Paweł Hemperek</managingEditor>
-		<pubDate>Tue, 20 Feb 2018 22:10:13 GMT</pubDate>
-		<lastBuildDate>Tue, 20 Feb 2018 22:10:13 GMT</lastBuildDate>
+		<pubDate>Wed, 21 Feb 2018 21:48:45 GMT</pubDate>
+		<lastBuildDate>Wed, 21 Feb 2018 21:48:45 GMT</lastBuildDate>
 		<item>
 			<title>Simple mediator pattern implementation in C#</title>
-			<link>http://host.com/posts/simple-mediator-pattern-implementation-in-c</link>
+			<link>http://blog.pawel.hemperek.pl/posts/simple-mediator-pattern-implementation-in-c</link>
 			<description>&lt;p&gt;Recently I watched &lt;a href="https://www.youtube.com/watch?v=wTd-VcJCs_M"&gt;fantastic talk by Jimmy Bogard&lt;/a&gt; about how to design your application, so your architecture is as SOLID as your code is. In his talk he says about CQRS and how this pattern allowed him to design his application better.&lt;/p&gt;
-&lt;p&gt;I have to say - this talk really inspired me. In projects I worked on it was pretty common, that there would be a &lt;code&gt;Repository&lt;/code&gt; class, which had (too) many methods. In most cases one method was used in one single place. I really like the idea of bringing CQRS as cure for that.&lt;/p&gt;</description>
+&lt;p&gt;I have to say - this talk really inspired me. In projects I worked on, both professionally and as a hobby, it was an obvious to have a &lt;code&gt;Repository&lt;/code&gt; class, which had methods like&lt;/p&gt;
+
+&lt;p&gt;Size of this file grew along side with project itself. In the end there would be a lot o methods, that were used only in one place in our codebase. Now when I think about that it's clear, that this approach violates many good practices. Most of all - Single Responsibility Principle. I really like how you could improve this poor design with a little of CQRS and &lt;a href="https://sourcemaking.com/design_patterns/mediator"&gt;mediator design pattern&lt;/a&gt;. It's really cool, because using this idea is possible even in legacy project and it will take only a little time to adopt.&lt;/p&gt;</description>
 			<author>Paweł Hemperek</author>
-			<guid>http://host.com/posts/simple-mediator-pattern-implementation-in-c</guid>
+			<guid>http://blog.pawel.hemperek.pl/posts/simple-mediator-pattern-implementation-in-c</guid>
 			<pubDate>Thu, 15 Feb 2018 00:00:00 GMT</pubDate>
 			<content:encoded>&lt;p&gt;Recently I watched &lt;a href="https://www.youtube.com/watch?v=wTd-VcJCs_M"&gt;fantastic talk by Jimmy Bogard&lt;/a&gt; about how to design your application, so your architecture is as SOLID as your code is. In his talk he says about CQRS and how this pattern allowed him to design his application better.&lt;/p&gt;
-&lt;p&gt;I have to say - this talk really inspired me. In projects I worked on it was pretty common, that there would be a &lt;code&gt;Repository&lt;/code&gt; class, which had (too) many methods. In most cases one method was used in one single place. I really like the idea of bringing CQRS as cure for that.&lt;/p&gt;
+&lt;p&gt;I have to say - this talk really inspired me. In projects I worked on, both professionally and as a hobby, it was an obvious to have a &lt;code&gt;Repository&lt;/code&gt; class, which had methods like&lt;/p&gt;
+&lt;pre&gt;
+&lt;code&gt;
+public class EntityRepository
+{
+    public EntityType GetById(int id);
+    public EntityType GetByIdWithSomething(int id);
+    // and so on...
+}
+&lt;/code&gt;
+&lt;/pre&gt;
+&lt;p&gt;Size of this file grew along side with project itself. In the end there would be a lot o methods, that were used only in one place in our codebase. Now when I think about that it's clear, that this approach violates many good practices. Most of all - Single Responsibility Principle. I really like how you could improve this poor design with a little of CQRS and &lt;a href="https://sourcemaking.com/design_patterns/mediator"&gt;mediator design pattern&lt;/a&gt;. It's really cool, because using this idea is possible even in legacy project and it will take only a little time to adopt.&lt;/p&gt;
 &lt;!--more--&gt;
-&lt;p&gt;Basic idea is this - let's create &lt;code&gt;OperationRequest&lt;/code&gt; class for every request in our appliation and &lt;code&gt;OperationResponse&lt;/code&gt; for every response. Request represents data which will be used by &lt;code&gt;OperationHandler&lt;/code&gt; to perform some task. Response represents result of requested operation. Let's write the code!&lt;/p&gt;
-&lt;p&gt;This kind of decoupling of objects, that work together, but should not know about eachother can be achieved using &lt;a href="https://sourcemaking.com/design_patterns/mediatorhttps://github.com/trobinpl/mediator"&gt;mediator design pattern&lt;/a&gt;. This pattern assumes, that there is some mediator between objects, so they are referencing this mediator object and not eachother. Thanks to that, objects are coupled only to mediator so their interactions can vary independently.&lt;/p&gt;
-&lt;p&gt;To two classes representing request and response we have to add three more - actual mediator, request handler and handler provider, which will be responsible for choosing handler based on request.&lt;/p&gt;
-&lt;p&gt;Mediator has only one job - take request, dispatch it to appropriate request handler and return response. Interface for mediator looks like this&lt;/p&gt;
+&lt;p&gt;Basic idea is this - let's create &lt;code&gt;OperationRequest&lt;/code&gt; class for every request in our appliation and &lt;code&gt;OperationResponse&lt;/code&gt; for every response. Request represents data which will be used by &lt;code&gt;OperationHandler&lt;/code&gt; to perform some task. Response represents result of requested operation. There are serveral ways to achieve this, but I will present my simple implemenation of &lt;a href="https://sourcemaking.com/design_patterns/mediator"&gt;mediator design pattern&lt;/a&gt; as a one possibility. Basic idea beind this design pattern is to couple interacting objects loosely, so they don't reference each other directly by introducing additional object, that mediates between collaborators.&lt;/p&gt;
+&lt;p&gt;In my solution mediator has only one job - take request, dispatch it to appropriate request handler and return response. Interface for mediator looks like this&lt;/p&gt;
 &lt;pre&gt;
 public interface IMediator
 {
-    TResponse Dispatch&lt;TRequest, TResponse&gt;(TRequest query);
+    TResponse Dispatch&amp;lt;TRequest, TResponse&amp;gt;(TRequest query);
 }
 &lt;/pre&gt;
 &lt;p&gt;Handler provider has also simple task - based on provided request get request handler and return it.&lt;/p&gt;
 &lt;pre&gt;
 public interface IHandlerProvider
 {
-    IRequestHandler&lt;TRequest, TResponse&gt; ProvideHandler&lt;TRequest, TResponse&gt;();
+    IRequestHandler&amp;lt;TRequest, TResponse&amp;gt; ProvideHandler&amp;lt;TRequest, TResponse&amp;gt;();
 }
 &lt;/pre&gt;
-&lt;p&gt;If we have provider we should declare how those provided handlers will look like. Provider is responsible for handlig query and returning response.&lt;/p&gt;
+&lt;p&gt;It's an interface for client to implement, so he can decide &lt;em&gt;how&lt;/em&gt; he would like to provide those handlers. &lt;a href="https://github.com/trobinpl/mediator"&gt;In my sample app on GitHub&lt;/a&gt; I created &lt;code&gt;DumbHandlerProvider&lt;/code&gt; which stores request -&amp;gt; handler map in simple &lt;code&gt;Dictionary&lt;/code&gt;, but I also created &lt;code&gt;AutofacHandlerProvider&lt;/code&gt; which uses Autofac to resolve all dependecies and to find request handler.&lt;/p&gt;
+&lt;p&gt;Provider will provide us with specific request handler. It is responsible for handling request in way it should be handled and returning response.&lt;/p&gt;
 &lt;pre&gt;
-public interface IRequestHandler&lt;TRequest, TResponse&gt;
+public interface IRequestHandler&amp;lt;TRequest, TResponse&amp;gt;
 {
     TResponse Handle(TRequest query);
 }
 &lt;/pre&gt;
-&lt;p&gt;We just declare an interface. We want client to decide &lt;em&gt;how&lt;/em&gt; he wants to do that. &lt;a href="https://github.com/trobinpl/mediator"&gt;In my sample app on GitHub&lt;/a&gt; I created &lt;code&gt;DumbHandlerProvider&lt;/code&gt; which stores request -&amp;gt; handler map in simple &lt;code&gt;Dictionary&lt;/code&gt;, but I also created &lt;code&gt;AutofacHandlerProvider&lt;/code&gt; which uses Autofac to resolve all dependecies and to find request handler.&lt;/p&gt;
-&lt;p&gt;We need just one more interface. It will be implemented by all &lt;code&gt;Request&lt;/code&gt; classes and will serve as common type for them, because &lt;code&gt;Request&lt;/code&gt; classes are simple data structures, so this interface doesn't declare any methods.&lt;/p&gt;
+&lt;p&gt;We need just one more interface. It will be implemented by all &lt;code&gt;Request&lt;/code&gt; classes and will serve as common type for them, because &lt;code&gt;Request&lt;/code&gt; classes are simple data structures, so this interface doesn't declare any methods. It could be an &lt;code&gt;abstract class&lt;/code&gt;, but I just went with interfaces all the way down ;-)&lt;/p&gt;
 &lt;pre&gt;
-public interface IRequest&lt;TResponse&gt;
+public interface IRequest&amp;lt;TResponse&amp;gt;
 {
 }
 &lt;/pre&gt;
@@ -61,16 +72,16 @@ public class Mediator : IMediator
         this._handlerProvider = handlerProvider;
     }
     
-    public TResponse Dispatch&lt;TRequest, TResponse&gt;(TRequest request)
+    public TResponse Dispatch&amp;lt;TRequest, TResponse&amp;gt;(TRequest request)
     {
-        var handler = this._handlerProvider.ProvideHandler&lt;TRequest, TResponse&gt;();
+        var handler = this._handlerProvider.ProvideHandler&amp;lt;TRequest, TResponse&amp;gt;();
 
         return handler.Handle(request);
     }
 }
 &lt;/pre&gt;
-&lt;p&gt;Implementation is really simple - use provided IHandlerProvider to get handler and handle request with specific data.  This object is actually the only thing that we're implementing in, let's say, library part of this solution. The rest of declared interfaces will be implemented by client.&lt;/p&gt;
-&lt;p&gt;First we declare how our request and response look like. Usually handling request would require, sometimes very complicated, logic. Our sample is a simple HelloWorld application, but we will simulate domain logic. In our request we will pass language parameter. Depending on its value we will return hello world message.&lt;/p&gt;
+&lt;p&gt;Implementation is really simple - use provided &lt;code&gt;IHandlerProvider&lt;/code&gt; to get handler and handle request with specific data.&lt;/p&gt;
+&lt;p&gt;In real world handling request requires performing some businness logic, but in my HelloWorld application I will assume that my logic is simply chosing language for &amp;quot;Hello world&amp;quot;. I'm passing language in request and expect translated &amp;quot;Hello world&amp;quot; in response.&lt;/p&gt;
 &lt;pre&gt;
 public class HelloWorldRequest : IRequest&lt;HelloWorldResponse&gt;
 {
@@ -90,10 +101,9 @@ public class HelloWorldResponse
     public string HelloWorldText { get; set; }
 }
 &lt;/pre&gt;
-&lt;p&gt;As you can see both request and response are not pretty simple. They responsibility is basically only hold pieces of information required for performing a task or for receiving response.&lt;/p&gt;
-&lt;p&gt;We have request and response model, so lets create our handler&lt;/p&gt;
+&lt;p&gt;As you can see both request and response are not complicated at all. They are just simple data structures. We have request and response model, so lets create our handler.&lt;/p&gt;
 &lt;pre&gt;
-public class HelloWorldRequestHandler : IRequestHandler&lt;HelloWorldRequest, HelloWorldResponse&gt;
+public class HelloWorldRequestHandler : IRequestHandler&amp;lt;HelloWorldRequest, HelloWorldResponse&amp;gt;
 {
     public HelloWorldResponse Handle(HelloWorldRequest helloWorldQuery)
     {
@@ -112,20 +122,20 @@ public class HelloWorldRequestHandler : IRequestHandler&lt;HelloWorldRequest, He
     }
 }
 &lt;/pre&gt;
-&lt;p&gt;In Handle method we check what language contains HelloWorldRequest.Language and based on this parmeter we're creating response object and returning it to mediator.&lt;/p&gt;
-&lt;p&gt;For this post I will use my DumbHandlerProvider, but in &lt;a href="https://github.com/trobinpl/mediator"&gt;mentioned before repository&lt;/a&gt; you can find provider based on Autofac. Every handler provider has to implement IHandlerProvider interface. Dumb implementation can look like this:&lt;/p&gt;
+&lt;p&gt;In Handle method we check what language was passed in &lt;code&gt;HelloWorldRequest&lt;/code&gt; and based on this parmeter we're creating response object. This object is then returned to mediator.&lt;/p&gt;
+&lt;p&gt;For this post I will use my &lt;code&gt;DumbHandlerProvider&lt;/code&gt; mentioned before. &lt;a href="https://github.com/trobinpl/mediator"&gt;In my repository I mentioned earlier&lt;/a&gt; you can find provider based on Autofac. It should give you an idea on how you could implement &lt;code&gt;IHandlerProvider&lt;/code&gt; so it suit your needs.&lt;/p&gt;
 &lt;pre&gt;
 public class DumbHandlerProvider : IHandlerProvider
 {
-    private Dictionary&lt;Type, Type&gt; _handlers = new Dictionary&lt;Type, Type&gt;()
+    private Dictionary&amp;lt;Type, Type&amp;gt; _handlers = new Dictionary&amp;lt;Type, Type&amp;gt;()
     {
         { typeof(HelloWorldRequest), typeof(HelloWorldRequestHandler) }
     };
 
-    public IRequestHandler&lt;TRequest, TResponse&gt; ProvideHandler&lt;TRequest, TResponse&gt;()
+    public IRequestHandler&amp;lt;TRequest, TResponse&gt;&amp;gt; ProvideHandler&amp;lt;TRequest, TResponse&amp;gt;()
     {
         Type requestType = typeof(TRequest);
-        IRequestHandler&lt;TRequest, TResponse&gt; handler = null;
+        IRequestHandler&amp;lt;TRequest, TResponse&amp;gt; handler = null;
 
         if (!this._handlers.ContainsKey(requestType))
         {
@@ -134,13 +144,13 @@ public class DumbHandlerProvider : IHandlerProvider
         }
         Type handlerType = this._handlers[requestType];
 
-        handler = (IRequestHandler&lt;TRequest, TResponse&gt;)Activator.CreateInstance(handlerType);
+        handler = (IRequestHandler&amp;lt;TRequest, TResponse&amp;gt;)Activator.CreateInstance(handlerType);
 
         return handler;
     }
 }
 &lt;/pre&gt;
-&lt;p&gt;In private Dictionary we are holding request -&amp;gt; handler mapping. Based on passed request we get instance of handler and returning it. Using this mechanism is really simple. We create Mediator object passing in its constructor instance of DumbHandlerProvider (or instance of any other class implementing IHandlerProvider interface of course) and we dispatch request to get response.&lt;/p&gt;
+&lt;p&gt;Having provider implemented we can finally wire everything together.&lt;/p&gt;
 &lt;pre&gt;
 Mediator mediator = new Mediator(new DumbHandlerProvider());
 
@@ -149,12 +159,13 @@ HelloWorldRequest query = new HelloWorldRequest()
     Language = HelloWorldRequest.SupportedLanguage.EN,
 };
 
-HelloWorldResponse response = mediator.Dispatch&lt;HelloWorldRequest, HelloWorldResponse&gt;(query);
+HelloWorldResponse response = mediator.Dispatch&amp;lt;HelloWorldRequest, HelloWorldResponse&amp;gt;(query);
 
 Console.WriteLine(response.HelloWorldText);
 Console.ReadLine();
 &lt;/pre&gt;
-&lt;p&gt;As you can see, implementing &lt;a href="https://sourcemaking.com/design_patterns/mediatorhttps://github.com/trobinpl/mediator"&gt;mediator design pattern&lt;/a&gt; can be really simple. This is NOT a producton code - I wrote all this as a coding exercise :-).&lt;/p&gt;
+&lt;p&gt;I must admit I really like this idea of splitting whole request handling process into pieces. It looks much cleaner in actual code, keep objects decoupled and when there is new feature, you just create couple new classes and you're set. Above code is obviously not production ready - it's just an excersise of mine. Actual implementation could be found in &lt;a href="https://github.com/jbogard/MediatR"&gt;Jimmy's MediatR library&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;How do you like this approach? Let me know in comments below!&lt;/p&gt;
 </content:encoded>
 		</item>
 	</channel>

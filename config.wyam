@@ -3,7 +3,7 @@
 #t BlogTemplate
 
 // Customize your settings and add new ones here
-Settings[Keys.Host] = "host.com";
+Settings[Keys.Host] = "blog.pawel.hemperek.pl";
 Settings[BlogKeys.Title] = "Learn Driven Development";
 Settings[BlogKeys.Description] = "Welcome!";
 Settings["ExcerptSeparator"] = "<!--more-->";

@@ -17,7 +17,7 @@
   @if(@Model.Get<bool>("Comments"))
   {
     <div class="post-comments" itemprop="comment">
-      @Html.Partial("_Comments")
+      @Html.Partial("_Comments", Model)
     </div>
   }
   @*{% if site.comments == true and page.comments != false %}
