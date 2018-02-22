@@ -8,16 +8,13 @@ Recently I watched [fantastic talk by Jimmy Bogard](https://www.youtube.com/watc
 
 I have to say - this talk really inspired me. In projects I worked on, both professionally and as a hobby, it was an obvious to have a <code>Repository</code> class, which had methods like
 
-<pre>
-<code>
-public class EntityRepository
+<pre><code class="cs">public class EntityRepository
 {
     public EntityType GetById(int id);
     public EntityType GetByIdWithSomething(int id);
     // and so on...
 }
-</code>
-</pre>
+</code></pre>
 
 Size of this file grew along side with project itself. In the end there would be a lot o methods, that were used only in one place in our codebase. Now when I think about that it's clear, that this approach violates many good practices. Most of all - Single Responsibility Principle. I really like how you could improve this poor design with a little of CQRS and [mediator design pattern][mediator]. It's really cool, because using this idea is possible even in legacy project and it will take only a little time to adopt.
 
@@ -27,45 +24,40 @@ Basic idea is this - let's create <code>OperationRequest</code> class for every 
 
 
 In my solution mediator has only one job - take request, dispatch it to appropriate request handler and return response. Interface for mediator looks like this
-<pre>
-public interface IMediator
+<pre><code class="cs">public interface IMediator
 {
     TResponse Dispatch&lt;TRequest, TResponse&gt;(TRequest query);
 }
-</pre>
+</code></pre>
 
 Handler provider has also simple task - based on provided request get request handler and return it.
 
-<pre>
-public interface IHandlerProvider
+<pre><code>public interface IHandlerProvider
 {
     IRequestHandler&lt;TRequest, TResponse&gt; ProvideHandler&lt;TRequest, TResponse&gt;();
 }
-</pre>
+</code></pre>
 
 It's an interface for client to implement, so he can decide _how_ he would like to provide those handlers. [In my sample app on GitHub][github_app] I created <code>DumbHandlerProvider</code> which stores request -> handler map in simple <code>Dictionary</code>, but I also created <code>AutofacHandlerProvider</code> which uses Autofac to resolve all dependecies and to find request handler.
 
 Provider will provide us with specific request handler. It is responsible for handling request in way it should be handled and returning response.
 
-<pre>
-public interface IRequestHandler&lt;TRequest, TResponse&gt;
+<pre><code>public interface IRequestHandler&lt;TRequest, TResponse&gt;
 {
     TResponse Handle(TRequest query);
 }
-</pre>
+</code></pre>
 
 We need just one more interface. It will be implemented by all <code>Request</code> classes and will serve as common type for them, because <code>Request</code> classes are simple data structures, so this interface doesn't declare any methods. It could be an <code>abstract class</code>, but I just went with interfaces all the way down ;-)
 
-<pre>
-public interface IRequest&lt;TResponse&gt;
+<pre><code>public interface IRequest&lt;TResponse&gt;
 {
 }
-</pre>
+</code></pre>
 
 With all those interfaces we can finally implement them! Let's start with <code>Mediator</code>
 
-<pre>
-public class Mediator : IMediator
+<pre><code>public class Mediator : IMediator
 {
     private IHandlerProvider _handlerProvider { get; set; }
 
@@ -81,14 +73,13 @@ public class Mediator : IMediator
         return handler.Handle(request);
     }
 }
-</pre>
+</code></pre>
 
 Implementation is really simple - use provided <code>IHandlerProvider</code> to get handler and handle request with specific data.
 
 In real world handling request requires performing some businness logic, but in my HelloWorld application I will assume that my logic is simply chosing language for "Hello world". I'm passing language in request and expect translated "Hello world" in response.
 
-<pre>
-public class HelloWorldRequest : IRequest<HelloWorldResponse>
+<pre><code>public class HelloWorldRequest : IRequest<HelloWorldResponse>
 {
     public enum SupportedLanguage
     {
@@ -98,21 +89,19 @@ public class HelloWorldRequest : IRequest<HelloWorldResponse>
 
     public SupportedLanguage Language { get; set; }
 }
-</pre>
+</code></pre>
 
 Response looks like this:
 
-<pre>
-public class HelloWorldResponse
+<pre><code>public class HelloWorldResponse
 {
     public string HelloWorldText { get; set; }
 }
-</pre>
+</code></pre>
 
 As you can see both request and response are not complicated at all. They are just simple data structures. We have request and response model, so lets create our handler.
 
-<pre>
-public class HelloWorldRequestHandler : IRequestHandler&lt;HelloWorldRequest, HelloWorldResponse&gt;
+<pre><code>public class HelloWorldRequestHandler : IRequestHandler&lt;HelloWorldRequest, HelloWorldResponse&gt;
 {
     public HelloWorldResponse Handle(HelloWorldRequest helloWorldQuery)
     {
@@ -130,14 +119,13 @@ public class HelloWorldRequestHandler : IRequestHandler&lt;HelloWorldRequest, He
         return response;
     }
 }
-</pre>
+</code></pre>
 
 In Handle method we check what language was passed in <code>HelloWorldRequest</code> and based on this parmeter we're creating response object. This object is then returned to mediator.
 
 For this post I will use my <code>DumbHandlerProvider</code> mentioned before. [In my repository I mentioned earlier][github_app] you can find provider based on Autofac. It should give you an idea on how you could implement <code>IHandlerProvider</code> so it suit your needs.
 
-<pre>
-public class DumbHandlerProvider : IHandlerProvider
+<pre><code>public class DumbHandlerProvider : IHandlerProvider
 {
     private Dictionary&lt;Type, Type&gt; _handlers = new Dictionary&lt;Type, Type&gt;()
     {
@@ -161,12 +149,11 @@ public class DumbHandlerProvider : IHandlerProvider
         return handler;
     }
 }
-</pre>
+</code></pre>
 
 Having provider implemented we can finally wire everything together.
 
-<pre>
-Mediator mediator = new Mediator(new DumbHandlerProvider());
+<pre><code>Mediator mediator = new Mediator(new DumbHandlerProvider());
 
 HelloWorldRequest query = new HelloWorldRequest()
 {
@@ -177,7 +164,7 @@ HelloWorldResponse response = mediator.Dispatch&lt;HelloWorldRequest, HelloWorld
 
 Console.WriteLine(response.HelloWorldText);
 Console.ReadLine();
-</pre>
+</code></pre>
 
 I must admit I really like this idea of splitting whole request handling process into pieces. It looks much cleaner in actual code, keep objects decoupled and when there is new feature, you just create couple new classes and you're set. Above code is obviously not production ready - it's just an excersise of mine. Actual implementation could be found in [Jimmy's MediatR library][mediatr].
 
