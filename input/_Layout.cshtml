@@ -16,6 +16,7 @@
         }
         <title>@pageTitle</title>
         <link rel="stylesheet" href="@Context.GetLink("/assets/css/style.css")">
+        <link rel="stylesheet" href="@Context.GetLink("/assets/css/highlight/highlight.css")">
     </head>
     <body>
         @Html.Partial("_Header")
@@ -64,6 +65,8 @@
                 <li><a href="@page.Item2">@page.Item1</a></li>
             }
         }*@
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
     <script id="dsq-count-scr" src="//learn-driven-development.disqus.com/count.js" async></script>
     </body>
 </html>
