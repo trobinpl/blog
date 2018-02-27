@@ -1,6 +1,6 @@
 #n Wyam.Sass
+#n Wyam.Highlight
 #recipe Blog
-#t BlogTemplate
 
 // Customize your settings and add new ones here
 Settings[Keys.Host] = "blog.pawel.hemperek.pl";
@@ -13,6 +13,8 @@ Settings["BlogAuthor"] = "Paweł Hemperek";
 
 // Add any pipeline customizations here
 Pipelines["Sass"].Clear();
+
+Pipelines["BlogPosts"].Add(Highlight());
 
 Pipelines.Add("WhiteglassSass",
     ReadFiles("assets/sass/main.scss"),

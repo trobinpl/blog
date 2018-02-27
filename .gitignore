@@ -1,3 +1,5 @@
 .vscode
-output/*
-config.wyam.*
+output/
+config.wyam.dll
+config.wyam.hash
+config.wyam.packages
