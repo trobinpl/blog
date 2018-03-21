@@ -1,10 +1,12 @@
 ---
 Title:  "True objects have something more than getters and setters"
-Published:   2018-03-22
+Published:   2018-03-21
 Tags: [software craftsmanship, architecture, oop, object oriented programming, clean code]
 Comments: true
 ---
 Object-oriented languages are very popular. That's a fact. Writing object-oriented code is one of the most popular requirements for developers building enterprise systems. Yet, despite popularity and everyone talking about objects and object-oriented code, I still think many programmers think, that just by writing `class` they make their code OO.
+
+<!--more-->
 
 Don't get me wrong. I did this (and probably still do from time to time ;-) ). I remember when I first started my adventure with programming. My first language I was learning was PHP. At more or less this time PHP 5 came out. Object-oriented version of PHP! I didn't quite understand why it's such a big deal, but I liked the way source code started to look like. I mean this:
 
