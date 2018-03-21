@@ -18,9 +18,9 @@ For some reason it was really big change for me to use this new super-fancy oper
 
 Then I switched to C# and did exactly the same thing. It really doesn't matter what language are you using - paradigm stays the same. It took me couple of years to realize what OOP truly is.
 
-If I had to put this into the least words possible I would say - your object should not be just data structure, it should have also behaviors. Data structures are not bad! They are perfect solution to certain problems. Serializing? Passing data from frontend to backend? Gathering some primitive types together? Go ahead - create data structure. Just let it be conscious choice.
+If I had to put this into the least words possible I would say - your object should not be just data structure, it should have also behaviors. Data structures are not bad! They are perfect solutions to certain problems. Serializing? Passing data from frontend to backend? Gathering some primitive types together? Go ahead - create data structure. Just let it be conscious choice.
 
-Think about when did you use `private` keyword? If your answer is long time ago, **probably** you write good old fashioned functions. Your object should hide how he stores data. Only thing visible from outside world should be public API of public methods. Changing internal state can be possible only through this API - never through accessing property directly.
+Think about when did you use `private` keyword? If your answer is long time ago, **probably** you write good old fashioned functions. It's because your object should hide it's internals. There is absolutely no hiding anything without access modifiers other than `public`.
 
     ticket.Close();
 
@@ -30,34 +30,48 @@ Instead of
 
 Why this is so important. Let me make this example more real worldish.
 
-    if(!user.Permissions.HasPermission(UserPermission.CanCloseTickets)){
-        throw new NotAuthorizedException("User doesn't have permissions to close this ticket")
+    List<UserPermission> permissions = this.userRepository.GetPermissionsForUser(user);
+
+    if(!permissions.Contains(UserPermission.CanCloseTicket) || !user.Roles.Contains(UserRoles.Admin)){
+        // user don't have permissions to close ticket. Let's see if he is an admin
+        List<UserRole> roles = this.userRepository.GetRolesForUser(user);
+        if(!roles.Contains(UserRoles.Admin)){
+            throw new NotAuthorizedException("User doesn't have permissions to close this ticket");
+        }
     }
 
     if(ticket.State == TicketState.Closed){
         throw new NotSupportedException("Ticket is already closed");
     }
 
-    
+    if(ticket.Priority == 3 && string.IsNullOrEmpty(ticket.CloseReason)){
+        return null;
+    }
+
+    ticket.Assignee = null;
 
     ticket.State = TicketState.Closed;
 
----------------------------------------------------------------------------------------------
-I'm sure everyone heard following terms: encapsulation, abstraction, inheritance and polymorphism. Did you ever take a minute to think what they really mean? I discovered that understanding the term itself is one thing, but actually _using_ it is completely different story.
+This example code is simple for now. It will grow though. You know it will. It always does. With more and more business requirements implemented like "we should check this before we set `Assignee` to null, so I will place it here!" understanding what this method is supposed to do would be really hard. If we wrap direct access to properties into methods, we end up with better code
 
-Good object should not be just data structure. It should encapsulate both data **and** methods. Changing data should be possible only through object's methods. It is really important, because object knows best how to stay in cohesive state. It gives us API to play with - that's it! Let's look at this from real-life perspective. When you turn on your computer, do you just press one button or have to boot every component by yourself? Someone designed an API for you - one elegant button - so you don't have to deal with this boring low-level stuff you don't want to know anything about.
+    if(!user.HasPermission(UserPermission.CanCloseTicket) || !user.InRole(UserRoles.Admin)){
+        throw new NotAuthorizedException("User doesn't have permissions to close this ticket");
+    }
 
-It doesn't matter if you change any of computer's parts. It is still switched on using the same button. In programming world this would mean, that no matter how you decide to represent your data _inside_ your object, it is still doing the same job. You can switch from `array[]` to `List<T>`, but from business perspective it's just technical detail. No business process changes if you do that switch, doesn't it? Keep internal stuff internal and expose public API.
+    if(ticket.AlreadyClosed()){
+        throw new NotSupportedException("Ticket is already closed");
+    }
 
-Abstraction, inheritance and polymorphism are also very important, but I want to talk about something a little bit different. I bet every programmer faced problem of deciding whether to use `int`, `double`, `long` or `decimal`. It is valid and important problem. I just think that we are trying to solve it too soon.
+    if(ticket.ShouldHaveCloseReason() && string.IsNullOrEmpty(ticket.CloseReason)){
+        return null;
+    }
 
-What is more important - correct data type or understanding what this method we're writing should really do? It is of course rhetorical question. We put so much effort into this technical stuff, often not understanding problem we want to solve.
+    ticket.RemoveAssignee();
 
-I talked about encapsulation, but I don't want to go further with abstraction, inheritance and polymorphism. I want to focus on something else. In my opinion this is more related with topic of this post, than those terms.
+    ticket.State = TicketState.Closed;
 
-Have you ever been wondering whether you should use `int` or `long`? Maybe `float` would be more appropriate? It's absolutely valid and important question. Answering it often includes thinking about needed precision or memory usage. There is one more option though. You can create your own type, right? You can wrap this value into meaningful class. You can abstract returning type away making it easier to change if you made wrong choice at the very beginning. 
+By no means this code is perfect. Just better. You can read it and don't have to decode what it does. There are **names** for operation being performed in closing ticket process.
 
-The same is for input parameters. Passing bunch of primitives into function doesn't tell anything about what they truly represent. Are they connected with each other somehow? Like for example `string firstname, string lastname`? Or maybe they are completely independent? I personally think that passing `PersonData personData` tells better story.
+It's easy to imagine lines like `if(ticket.Priority == 3 && string.IsNullOrEmpty(ticket.CloseReason)){` would be spread across whole system. What if we would like to introduce another condition to check? We would have to change every occurrence of this line. It's very plausible we would miss at least one. What if I would like to change `Priority` enum to something calculated on the fly? It gets worse and worse. Internal representation of data should not leak outside, because it can change dramatically. Being dependent of internals is asking for troubles.
 
-To clarify - I don't recommend changing every method not to accept primitives and wrapping everything into complex types, even if we want to pass simple `int count`. Overengineering is just as bad as no engineering at all.
-
+What do you think about this? Let me know in comments below!
