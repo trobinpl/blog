@@ -11,6 +11,7 @@ Settings["BlogAuthor"] = "Paweł Hemperek";
 
 Settings[BlogKeys.IndexPageSize] = 3;
 Settings[BlogKeys.IndexPaging] = true;
+Settings[BlogKeys.IgnoreFolders] = "drafts";
 
 // Add any pipeline customizations here
 
