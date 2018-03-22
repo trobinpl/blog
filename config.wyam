@@ -9,6 +9,9 @@ Settings[BlogKeys.Description] = "Welcome!";
 Settings["ExcerptSeparator"] = "<!--more-->";
 Settings["BlogAuthor"] = "Paweł Hemperek";
 
+Settings[BlogKeys.IndexPageSize] = 3;
+Settings[BlogKeys.IndexPaging] = true;
+
 // Add any pipeline customizations here
 
 // Add any pipeline customizations here
