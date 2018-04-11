@@ -23,6 +23,6 @@ Look at your car. If you don't have a car, just... look at someone else's. It's 
 
 Why microservices are so popular right now and we look at monoliths with genuine disgust? The first is (or rather should be) smaller and easier to change. The latter is big, messy and harder to maintain. We split big system into smaller chunks. We do this with complexity as well, because it's easier to comprehend many smaller modules, than one big-ass module.
 
-That's why I think SRP is really important. Naturally it's not like we should apply it without deeper consideration, [whether it will make our code better or worse](https://hackernoon.com/you-dont-understand-the-single-responsibility-principle-abfdd005b137)!
+That's why I think SRP is really important. Naturally it's not like we should apply it without deeper consideration, [if it will make our code better or worse](https://hackernoon.com/you-dont-understand-the-single-responsibility-principle-abfdd005b137)!
 
 What are your thoughts about this subject? Let me know in the comments below!
